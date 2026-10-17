@@ -6,6 +6,8 @@ public class Hero : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
 
+    public bool CanMove { get; set; } = true;
+
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private Vector2 input;
@@ -19,6 +21,8 @@ public class Hero : MonoBehaviour
     private void Update()
     {
         input = Vector2.zero;
+
+        if (!CanMove) return;
 
         var kb = Keyboard.current;
         if (kb == null) return;
