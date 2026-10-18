@@ -24,6 +24,7 @@ public class DayManager : MonoBehaviour
     [SerializeField] private float startDelay = 5f;             // пауза перед первым гостем
     [SerializeField] private float endDelay = 5f;               // пауза после ухода последнего гостя
     [SerializeField] private float emptyHallDelay = 5f;         // через сколько придёт следующий, если зал опустел раньше интервала
+    [SerializeField] private float graceTimePerGuest = 20f;     // запас времени на каждого гостя сверх длины дня (лимит дня)
 
     [Header("Сцена")]
     [SerializeField] private Transform spawnPoint;
@@ -32,12 +33,19 @@ public class DayManager : MonoBehaviour
     [SerializeField] private Guest[] guestPrefabs;
     [SerializeField] private List<ArcadeMachine> machines = new List<ArcadeMachine>();
 
+    [Header("Значок над гостем, который ждёт игрока у автомата")]
+    [SerializeField] private GameObject pickupIconPrefab;
+    [Tooltip("Высота значка над головой гостя в долях высоты его спрайта")]
+    [SerializeField] private float pickupIconHeightFactor = 0.2f;
+
     public event Action<int> OnDayStarted;
     public event Action<int> OnDayEnded;
 
     public int CurrentDay => currentDay;
     public Transform ExitPoint => exitPoint;
     public float PlayTime => playTime;
+    public GameObject PickupIconPrefab => pickupIconPrefab;
+    public float PickupIconHeightFactor => pickupIconHeightFactor;
     public float CashierWaitTime => Mathf.Max(minCashierWait, currentInterval - cashierWaitReserve);
 
     public IReadOnlyList<ArcadeMachine> Machines => machines;
@@ -150,6 +158,12 @@ public class DayManager : MonoBehaviour
         Debug.Log("День " + currentDay + ": автоматов " + machineCount + ", гостей " + count +
                   ", интервал " + currentInterval.ToString("0.0") + " с");
 
+        // Лимит времени дня: длина дня + запас на каждого гостя.
+        // Не уложились: день заканчивается принудительно, оставшиеся гости уходят без оплаты.
+        float timeLimit = startDelay + dayDuration + count * graceTimePerGuest;
+        float dayStartTime = Time.time;
+        Debug.Log("Лимит времени дня: " + timeLimit.ToString("0") + " с");
+
         OnDayStarted?.Invoke(currentDay);
         AudioManager.PlayDayMusic();
 
@@ -182,10 +196,28 @@ public class DayManager : MonoBehaviour
 
         Debug.Log("Все гости дня созданы, ждём пока уйдут");
 
-        // День заканчивается, когда все гости ушли
-        while (activeGuests > 0)
+        // День заканчивается, когда все гости ушли или вышел лимит времени
+        while (activeGuests > 0 && Time.time - dayStartTime < timeLimit)
         {
             yield return null;
+        }
+
+        if (activeGuests > 0)
+        {
+            Debug.Log("Лимит времени дня вышел, оставшиеся гости уходят без оплаты");
+
+            // Если игрок сейчас в диалоге, даём ему закончить
+            while (cashier != null && cashier.IsDialogActive)
+            {
+                yield return null;
+            }
+
+            foreach (Guest g in FindObjectsByType<Guest>())
+            {
+                g.Abort();
+            }
+
+            activeGuests = 0;
         }
 
         // Пауза после ухода последнего гостя

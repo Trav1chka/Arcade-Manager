@@ -1,11 +1,12 @@
 using System.Collections;
 using UnityEngine;
 
-// Гость: идёт к кассе -> ждёт игрока -> диалог -> (возможно) играет в автомате -> уходит.
+// Гость: идёт к кассе -> ждёт игрока -> диалог -> (возможно) играет в автомате ->
+// ждёт, пока игрок заберёт деньги (Enter рядом) -> уходит.
 // На префабе: SpriteRenderer. Rigidbody2D не нужен; коллайдер, если есть, лучше с Is Trigger.
 public class Guest : MonoBehaviour
 {
-    private enum State { Walking, Waiting, Talking, Playing, Leaving }
+    private enum State { Walking, Waiting, Talking, Playing, ReadyToCollect, Leaving }
 
     [SerializeField] private DialogGroup dialogGroup;   // группа (настроение) этого персонажа
     [SerializeField] private float speed = 2f;
@@ -17,6 +18,7 @@ public class Guest : MonoBehaviour
     public DialogGroup DialogGroup => dialogGroup;
     public string DisplayName => displayName;
     public bool IsWaiting => state == State.Waiting;
+    public bool IsReadyToCollect => state == State.ReadyToCollect;
 
     public Sprite Portrait
     {
@@ -39,6 +41,10 @@ public class Guest : MonoBehaviour
     private bool conversationFinished;
     private bool leaveAfterDialog;
 
+    private ArcadeMachine currentMachine;
+    private bool collected;
+    private GameObject pickupIcon;
+
     public void Init(DayManager dayManager, Cashier cashierRef)
     {
         day = dayManager;
@@ -60,6 +66,35 @@ public class Guest : MonoBehaviour
         leaveAfterDialog = reply == ReplyType.Negative
                            && Random.value < dialogGroup.leaveChanceOnNegative;
         conversationFinished = true;
+    }
+
+    // Вызывает MachineInteraction, когда игрок подошёл к гостю у автомата и нажал Enter
+    public void Collect()
+    {
+        if (state != State.ReadyToCollect) return;
+
+        AudioManager.PlayCollect();
+        collected = true;
+    }
+
+    // Вызывает DayManager, когда вышел лимит времени дня: гость исчезает, денег за игру нет
+    public void Abort()
+    {
+        if (day == null) return;    // этот гость не создан через DayManager
+
+        StopAllCoroutines();
+        HidePickupIcon();
+
+        if (currentMachine != null)
+        {
+            currentMachine.Release();
+            currentMachine = null;
+        }
+
+        if (cashier != null) cashier.ClearGuest(this);
+
+        day.OnGuestGone();
+        Destroy(gameObject);
     }
 
     private IEnumerator Life()
@@ -121,6 +156,8 @@ public class Guest : MonoBehaviour
 
     private IEnumerator PlayAtMachine(ArcadeMachine machine)
     {
+        currentMachine = machine;
+
         state = State.Walking;
         yield return MoveTo(machine.StandPoint.position);
 
@@ -128,8 +165,23 @@ public class Guest : MonoBehaviour
         float playTime = day.PlayTime;
         yield return new WaitForSeconds(playTime);
 
-        machine.Release();
+        // Игра закончилась: гость остаётся у автомата со значком над головой,
+        // автомат занят, пока игрок не подойдёт и не нажмёт Enter
+        state = State.ReadyToCollect;
+        collected = false;
+        ShowPickupIcon();
+        AudioManager.PlayReadyToCollect();
 
+        while (!collected)
+        {
+            yield return null;
+        }
+
+        HidePickupIcon();
+        machine.Release();
+        currentMachine = null;
+
+        // Деньги за игру выдаются только сейчас
         int income = Mathf.RoundToInt(machine.ProfitPerSecond * playTime);
         if (GameStats.Instance != null)
         {
@@ -144,6 +196,32 @@ public class Guest : MonoBehaviour
 
         day.OnGuestGone();
         Destroy(gameObject);
+    }
+
+    // Значок над головой: ставится над верхним краем спрайта гостя
+    private void ShowPickupIcon()
+    {
+        GameObject prefab = day.PickupIconPrefab;
+        if (prefab == null || pickupIcon != null) return;
+
+        Vector3 pos;
+        if (sr != null)
+        {
+            Bounds b = sr.bounds;
+            pos = new Vector3(b.center.x, b.max.y + b.size.y * day.PickupIconHeightFactor, transform.position.z);
+        }
+        else
+        {
+            pos = transform.position + Vector3.up;
+        }
+
+        pickupIcon = Instantiate(prefab, pos, Quaternion.identity, transform);
+    }
+
+    private void HidePickupIcon()
+    {
+        if (pickupIcon != null) Destroy(pickupIcon);
+        pickupIcon = null;
     }
 
     private IEnumerator MoveTo(Vector3 target)

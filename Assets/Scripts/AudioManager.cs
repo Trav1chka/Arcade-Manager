@@ -11,12 +11,15 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip guestArrivedClip;       // гость пришёл к кассе
     [SerializeField] private AudioClip machinePurchasedClip;   // куплен автомат
     [SerializeField] private AudioClip nextDayClip;            // нажата кнопка следующего дня
+    [SerializeField] private AudioClip readyToCollectClip;     // гость доиграл и ждёт игрока у автомата
+    [SerializeField] private AudioClip collectClip;            // игрок забрал деньги у гостя возле автомата
     [SerializeField] private AudioClip replyNegativeClip;      // выбран негативный ответ
     [SerializeField] private AudioClip replyNeutralClip;       // выбран нейтральный ответ
     [SerializeField] private AudioClip replyPositiveClip;      // выбран позитивный ответ
 
     [Header("Музыка")]
     [SerializeField] private AudioClip dayMusic;               // песня, пока идёт день (повторяется)
+    [SerializeField] private AudioClip shopMusic;              // песня в магазине (повторяется)
     [SerializeField] private float fadeTime = 1f;              // плавное включение и выключение, секунд
 
     [Header("Громкость")]
@@ -61,6 +64,16 @@ public class AudioManager : MonoBehaviour
         if (Instance != null) Instance.PlaySfx(Instance.nextDayClip);
     }
 
+    public static void PlayReadyToCollect()
+    {
+        if (Instance != null) Instance.PlaySfx(Instance.readyToCollectClip);
+    }
+
+    public static void PlayCollect()
+    {
+        if (Instance != null) Instance.PlaySfx(Instance.collectClip);
+    }
+
     public static void PlayReply(ReplyType type)
     {
         if (Instance == null) return;
@@ -75,10 +88,20 @@ public class AudioManager : MonoBehaviour
 
     public static void PlayDayMusic()
     {
-        if (Instance != null) Instance.StartMusic();
+        if (Instance != null) Instance.StartMusic(Instance.dayMusic);
     }
 
     public static void StopDayMusic()
+    {
+        if (Instance != null) Instance.EndMusic();
+    }
+
+    public static void PlayShopMusic()
+    {
+        if (Instance != null) Instance.StartMusic(Instance.shopMusic);
+    }
+
+    public static void StopShopMusic()
     {
         if (Instance != null) Instance.EndMusic();
     }
@@ -91,13 +114,13 @@ public class AudioManager : MonoBehaviour
         sfxSource.PlayOneShot(clip, sfxVolume);
     }
 
-    private void StartMusic()
+    private void StartMusic(AudioClip clip)
     {
-        if (dayMusic == null) return;
+        if (clip == null) return;
 
         if (musicRoutine != null) StopCoroutine(musicRoutine);
 
-        musicSource.clip = dayMusic;
+        musicSource.clip = clip;
         musicSource.volume = 0f;
         musicSource.Play();
 

@@ -107,6 +107,7 @@ public class ShopController : MonoBehaviour
 
         shopPanel.SetActive(true);
         Refresh();
+        AudioManager.PlayShopMusic();
 
         if (fader != null) yield return fader.FadeFromBlack();
 
@@ -118,6 +119,7 @@ public class ShopController : MonoBehaviour
     {
         transitioning = true;
         AudioManager.PlayNextDay();
+        AudioManager.StopShopMusic();
 
         if (fader != null) yield return fader.FadeToBlack();
 

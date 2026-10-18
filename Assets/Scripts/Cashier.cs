@@ -15,6 +15,7 @@ public class Cashier : MonoBehaviour
     private bool dialogActive;
 
     public Transform GuestPoint => guestPoint;
+    public bool IsDialogActive => dialogActive;
 
     public bool TryRegisterGuest(Guest guest)
     {
