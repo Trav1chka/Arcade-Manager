@@ -1,0 +1,257 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 300f5844559acab45b0a9637e17f2a48, type: 3}
+  m_Name: zlodeje
+  m_EditorClassIdentifier: Assembly-CSharp::DialogGroup
+  groupName: 
+  leaveChanceOnNegative: 0.5
+  entries:
+  - guestPhrase: "K\xE1mo, docela to tu m\xE1\u0161 pln\xFD. B\xFDv\xE1\u0161 tu za t\xEDm pultem takhle s\xE1m a\u017E do zav\xEDra\u010Dky?"
+    negative:
+      text: "V\u011Bt\u0161inou jo, jsem tu s\xE1m. Pot\u0159ebuje\u0161 rozm\u011Bnit, nebo n\u011Bco konkr\xE9tn\xEDho?"
+      guestReply: "Jen m\u011B to zaj\xEDmalo. Dej mi teda \u017Eetony za stovku."
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "To z\xE1le\u017E\xED na dni. Pot\u0159ebuje\u0161 rozm\u011Bnit, nebo se jen vypt\xE1v\xE1\u0161?"
+      guestReply: "Kl\xEDdek, jen se pt\xE1m. Tady m\xE1\u0161 prachy na \u017Eetony."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "S\xE1m? K\xE1mo, m\xE1m tu v\u0161ude kamery a baseballku pod pultem. N\u011Bjakej probl\xE9m?"
+      guestReply: "Hej, v klidu! Nic nezkou\u0161\xEDm, jen jsem se ptal!"
+      socialBatteryChange: -1
+      money: 15
+  - guestPhrase: "K\xE1mo, docela to tu m\xE1\u0161 pln\xFD. B\xFDv\xE1\u0161 tu za t\xEDm pultem takhle s\xE1m a\u017E do zav\xEDra\u010Dky?"
+    negative:
+      text: "Jo, nikdo dal\u0161\xED u\u017E na v\xFDpomoc nep\u0159ijde. Ale po zav\xEDra\u010Dce se tu nikdo zdr\u017Eovat nesm\xED."
+      guestReply: "Jasn\u011B, jasn\u011B, po zav\xEDra\u010Dce se uvid\xED... heh."
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "Jsem tu dost dlouho na to, abych si v\u0161iml v\u0161eho, co se v hern\u011B d\u011Bje."
+      guestReply: "Ch\xE1pu t\u011B. Jdu se pod\xEDvat po automatech."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "Zrovna \u010Dek\xE1m, a\u017E doraz\xED kluci ze sekuri\u0165\xE1k\u016F, tak\u017Ee jestli nehraje\u0161, pomalu se pakuj."
+      guestReply: "U\u017E jdu, u\u017E jdu. Nemus\xED\u0161 bejt hned tak agresivn\xED."
+      socialBatteryChange: -1
+      money: 15
+  - guestPhrase: "K\xE1mo, docela to tu m\xE1\u0161 pln\xFD. B\xFDv\xE1\u0161 tu za t\xEDm pultem takhle s\xE1m a\u017E do zav\xEDra\u010Dky?"
+    negative:
+      text: "Jsem tu jen j\xE1. Sna\u017E\xEDm se, aby tu byl klid, tak snad tu dneska nebudou \u017E\xE1dn\xE9 probl\xE9my."
+      guestReply: "Klid tu bude, neboj... kdy\u017E nebudou probl\xE9my."
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "Zav\xEDr\xE1me v deset, do t\xE9 doby tu dohl\xED\u017E\xEDm na po\u0159\xE1dek."
+      guestReply: "Dob\u0159e, dob\u0159e, ned\u011Blej vlny. Jdu hr\xE1t."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "M\xE1m to tu pod palcem! Jestli zkou\u0161\xED\u0161 \u0161t\u011Bst\xED, tak zkus rad\u0161i ten automat vzadu, tam na tebe bude l\xEDp vid\u011Bt."
+      guestReply: "Fajn. Se\u0161 n\u011Bjakej ostrej. Jdu dop\u0159edu na ty auta."
+      socialBatteryChange: -1
+      money: 15
+  - guestPhrase: "Hele, j\xE1 jenom kouk\xE1m, nemus\xEDm hned platit, abych tu mohl sed\u011Bt, ne?"
+    negative:
+      text: "No... my tu vlastn\u011B \u017E\xE1dnou \u010Dek\xE1rnu nem\xE1me, ale jestli si sedne\u0161 tamhle do rohu a bude\u0161 potichu..."
+      guestReply: "Par\xE1da, d\xEDk. Kdyby n\u011Bco, sp\xEDm."
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "Tohle je herna, ne park. Kdo nehraje, ten tu nesed\xED. Uvolni m\xEDsto plat\xEDc\xEDm."
+      guestReply: "Ty nad\u011Bl\xE1\u0161. Tak j\xE1 teda jdu no, kdy\u017E jsi takovej."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "Koukat m\u016F\u017Ee\u0161 na televizi doma! Tady se pa\u0159\xED. Bu\u010F si kup \u017Eetony, nebo kupuju letenku ven tob\u011B!"
+      guestReply: "No jo furt! Tady m\xE1\u0161 pen\xEDze, dej mi ty \u017Eetony, a\u0165 m\xE1m klid."
+      socialBatteryChange: -1
+      money: 15
+  - guestPhrase: "Hele, j\xE1 jenom kouk\xE1m, nemus\xEDm hned platit, abych tu mohl sed\u011Bt, ne?"
+    negative:
+      text: "Kdy\u017E nebude\u0161 ru\u0161it ostatn\xED z\xE1kazn\xEDky, tak tu asi chv\xEDli z\u016Fstat m\u016F\u017Ee\u0161."
+      guestReply: "Jasn\xE1 v\u011Bc, budu jako my\u0161ka. Neusly\u0161\xED\u0161 o mn\u011B."
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "M\u016F\u017Ee\u0161 se pod\xEDvat, jak to tu vypad\xE1, ale kempovat tu bez placen\xED nejde."
+      guestReply: "Fajn, stejn\u011B je tu hrozn\xE1 nuda. \u010Cau."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "Za kouk\xE1n\xED se u m\u011B plat\xED! Kup si aspo\u0148 colu, jinak t\u011B zapoj\xEDm jako \u017Eivou p\u0159ek\xE1\u017Eku do Pinballu!"
+      guestReply: "Haha, hrozn\u011B vtipn\xFD. Tak mi dej tu colu teda."
+      socialBatteryChange: -1
+      money: 15
+  - guestPhrase: "Hele, j\xE1 jenom kouk\xE1m, nemus\xEDm hned platit, abych tu mohl sed\u011Bt, ne?"
+    negative:
+      text: "Fajn, ale jenom na chv\xEDli, jo? Dlouho tu bez hran\xED fakt sed\u011Bt nem\u016F\u017Ee\u0161."
+      guestReply: "Jo jo, jasn\u011B, jenom na chvilku..."
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "Jestli nem\xE1\u0161 na \u017Eetony, b\u011B\u017E rad\u0161i ven. Blokuje\u0161 p\u0159\xEDstup k automat\u016Fm."
+      guestReply: "U\u017E jdu, do pr\u010Dic. Dej mi pokoj."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "Kdy\u017E t\u011B tak bav\xED koukat, co kdybys vzal mop a koukal vyle\u0161tit tamhleten pult? Jinak mazej hr\xE1t!"
+      guestReply: "Ukl\xEDzet?! Tak to ani n\xE1hodou, rad\u0161i p\xE1d\xEDm ven!"
+      socialBatteryChange: -1
+      money: 15
+  - guestPhrase: "Ono se to zaseklo, tak se to sna\u017E\xEDm opravit, ne asi!"
+    negative:
+      text: "Pros\xEDm, p\u0159esta\u0148! Nem\u016F\u017Ee\u0161 do toho takhle kopat, v\u017Edy\u0165 to \xFApln\u011B zni\u010D\xED\u0161."
+      guestReply: "V\u017Edy\u0165 to nic nevydr\u017E\xED. Tak mi dej zp\xE1tky m\u016Fj \u017Eeton."
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "Okam\u017Eit\u011B od toho odstup. Jestli do toho je\u0161t\u011B jednou kopne\u0161, kon\u010D\xED\u0161 tu."
+      guestReply: "V\u017Edy\u0165 u\u017E toho nech\xE1v\xE1m, takovej hyster\xE1k kv\u016Fli star\xFD bedn\u011B."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "Jestli do toho kopne\u0161 je\u0161t\u011B jednou, uk\xE1\u017Eu ti, jak se d\u011Bl\xE1 pravej tilt! Ruce pry\u010D!"
+      guestReply: "Ty vole, dobr\xFD, nesah\xE1m na to! Klid!"
+      socialBatteryChange: -1
+      money: 15
+  - guestPhrase: "Ono se to zaseklo, tak se to sna\u017E\xEDm opravit, ne asi!"
+    negative:
+      text: "Nech to b\xFDt, j\xE1 ti ten ztracen\xFD \u017Eeton prost\u011B vr\xE1t\xEDm. Jenom u\u017E do toho automatu nebouchej."
+      guestReply: "No proto. Hned to naval a j\xE1 to zkus\xEDm jinde."
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "Tohle opravuju j\xE1. Vypadni od toho automatu, nebo tu \u0161kodu zaplat\xED\u0161."
+      guestReply: "Tak si to oprav s\xE1m, in\u017Een\xFDre. Zasekne se to hned jak to zapne\u0161."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "Sna\u017E\xED\u0161 se to opravit?! Jedin\xFD, co te\u010F oprav\xED\u0161, je tvoje ch\u016Fze, proto\u017Ee polet\xED\u0161 dve\u0159ma nap\u0159ed!"
+      guestReply: "U\u017E jdu od toho! Nemus\xED\u0161 mi hned vyhro\u017Eovat vyhazovem!"
+      socialBatteryChange: -1
+      money: 15
+  - guestPhrase: "Ono se to zaseklo, tak se to sna\u017E\xEDm opravit, ne asi!"
+    negative:
+      text: "Na ten automat se nesm\xED sahat hrubou silou. Rad\u0161i od toho odstup a b\u011B\u017E zkusit n\u011Bco jin\xE9ho."
+      guestReply: "Tak si to b\u011B\u017Ete pofoukat, pane mana\u017Eer. Jdu na st\u0159\xEDle\u010Dky."
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "Od toho je tady obsluha. Kopej si do m\xED\u010De venku, ne do m\xE9ho majetku."
+      guestReply: "Fajn. Zlat\xFD star\xFD automaty u n\xE1s na s\xEDdli\u0161ti."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "Oprav\xE1\u0159e tu d\u011Bl\xE1m j\xE1! Vyt\xE1hni z toho tu minci hezky prst\xED\u010Dkama, nebo ti ten automat na\xFA\u010Dtuju i s \xFArokama!"
+      guestReply: "Dob\u0159e, dob\u0159e, vyt\xE1hnu to norm\xE1ln\u011B. S tebou nen\xED sranda."
+      socialBatteryChange: -1
+      money: 15
+  - guestPhrase: "Nem\xE1\u0161 cig\xE1ro? A ne\u0159\xEDkej to m\xFDmu t\xE1tovi, nebo ti to tu rozml\xE1t\xEDm."
+    negative:
+      text: "J\xE1 nekou\u0159\xEDm. A fakt t\u011B pros\xEDm, hlavn\u011B tu nic nerozb\xEDjej, m\u011Bl bych z toho hrozn\xFD mal\xE9r."
+      guestReply: "Hehe, tak vid\xED\u0161. Rad\u0161i bu\u010F zticha a nic se ti nestane."
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "Nevedu. A to vyhro\u017Eov\xE1n\xED si schovej na n\u011Bkoho, koho to zaj\xEDm\xE1."
+      guestReply: "Tss, jen jsem to zkou\u0161el. Kl\xEDdek."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "Rozml\xE1t\xED\u0161?! K\xE1mo, jestli tu zk\u0159iv\xED\u0161 jedinej kabel, zavol\xE1m t\xE1tovi, m\xE1m\u011B i tvoj\xED babi\u010Dce a je\u0161t\u011B t\u011B nech\xE1m vyt\u0159\xEDt celou hernu!"
+      guestReply: "Ne! Dob\u0159e, omlouv\xE1m se, hlavn\u011B nikam nevolej!"
+      socialBatteryChange: -1
+      money: 15
+  - guestPhrase: "Nem\xE1\u0161 cig\xE1ro? A ne\u0159\xEDkej to m\xFDmu t\xE1tovi, nebo ti to tu rozml\xE1t\xEDm."
+    negative:
+      text: "Nem\xE1m cigarety. T\xE1tovi nic \u0159\xEDkat nebudu, ale prost\u011B u\u017E m\u011B nech na pokoji."
+      guestReply: "M\xE1\u0161 \u0161t\u011Bst\xED. Koukej jinam, jdu si hr\xE1t."
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "Cigarety tu neprod\xE1v\xE1me a rozb\xEDjet tu nic nebude\u0161. Rad\u0161i b\u011B\u017E dom\u016F."
+      guestReply: "Trapn\xFD. Tady stejn\u011B chc\xEDpl pes. Jdu."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "Cig\xE1ro nem\xE1m, ale jestli mi bude\u0161 vyhro\u017Eovat, rovnou ti ud\u011Bl\xE1m v\xFDchovnou lekci, za kterou mi tv\u016Fj t\xE1ta je\u0161t\u011B pod\u011Bkuje!"
+      guestReply: "Fajn, fajn! M\xE1m svoje \u017Eetony, jdu prost\u011B jenom hr\xE1t!"
+      socialBatteryChange: -1
+      money: 15
+  - guestPhrase: "Nem\xE1\u0161 cig\xE1ro? A ne\u0159\xEDkej to m\xFDmu t\xE1tovi, nebo ti to tu rozml\xE1t\xEDm."
+    negative:
+      text: "Tohle bys d\u011Blat nem\u011Bl. Slibuju, \u017Ee to nikomu ne\u0159eknu, ale pros\xEDm, u\u017E po mn\u011B nic necht\u011Bj a chovej se norm\xE1ln\u011B."
+      guestReply: "To douf\xE1m, jinak si m\u011B nep\u0159ej."
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "Tvoje probl\xE9my s t\xE1tou m\u011B nezaj\xEDmaj\xED. Jsi v hern\u011B, tak se podle toho chovej, nebo odejdi."
+      guestReply: "Ty jsi taky hroznej suchar. Dej mi \u017Eetony, jdu aspo\u0148 na z\xE1vodn\xED."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "Na drsn\xFDho si hraj u \u0161koly! Tady je moje \xFAzem\xED. Kup si \u017Eetony a zav\u0159i pusu, nebo ti za\u0159\xEDd\xEDm takovej game over, \u017Ee se z toho nevzpamatuje\u0161!"
+      guestReply: "J\xE1... j\xE1 to tak nemyslel. Jdu k Pac-Manovi."
+      socialBatteryChange: -1
+      money: 15
+  - guestPhrase: "Na\u0161el jsem tenhle \u017Eeton na zemi. Kdy\u017E v\xE1m ho vr\xE1t\xEDm, d\xE1te mi za n\u011Bj pen\xEDze?"
+    negative:
+      text: "My to takhle sice ned\u011Bl\xE1me... ale dob\u0159e, tady m\xE1\u0161 dvacku a pros\xEDm t\u011B, u\u017E b\u011B\u017E."
+      guestReply: "D\xEDky, \u0161\xE9fe! M\u011Bjte se tu fajn!"
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "\u017Detony se zp\xE1tky na pen\xEDze nem\u011Bn\xED. Bu\u010F ho ho\u010F do automatu, nebo mi ho prost\u011B vra\u0165."
+      guestReply: "Ach jo. Tak j\xE1 to jdu teda n\u011Bkam hodit."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "Na\u0161el na zemi?! Ty ses ho sna\u017Eil vy\u0161\u0165ourat z vr\xE1cen\xED minc\xED! Dej ho sem, zkus to je\u0161t\u011B jednou a vylet\xED\u0161!"
+      guestReply: "Co?! Ne! ...Dob\u0159e, rad\u0161i si ho beru a jdu hr\xE1t."
+      socialBatteryChange: -1
+      money: 15
+  - guestPhrase: "Na\u0161el jsem tenhle \u017Eeton na zemi. Kdy\u017E v\xE1m ho vr\xE1t\xEDm, d\xE1te mi za n\u011Bj pen\xEDze?"
+    negative:
+      text: "Vlastn\u011B je to majetek herny, ale jestli ti to ud\u011Bl\xE1 radost, tak ti za to ty pen\xEDze d\xE1m."
+      guestReply: "No jasn\u011B, radost. D\xEDky moc."
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "D\xEDky, \u017Ees ho zvednul, ale v\xFDkup nevedeme. Nech ho na pultu."
+      guestReply: "Tak si ho nechte no. \u0160koda snahy."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "Pen\xEDze za m\u016Fj vlastn\xED \u017Eeton? To zkou\u0161ej n\u011Bkde v zastav\xE1rn\u011B! Dej ho sem, nebo po tob\u011B budu cht\xEDt poplatek za to, \u017Ee \u0161pin\xED\u0161 podlahu!"
+      guestReply: "Hej, klid! Tak j\xE1 ho jdu utratit, no! Nemus\xED\u0161 hned \u0159v\xE1t!"
+      socialBatteryChange: -1
+      money: 15
+  - guestPhrase: "Na\u0161el jsem tenhle \u017Eeton na zemi. Kdy\u017E v\xE1m ho vr\xE1t\xEDm, d\xE1te mi za n\u011Bj pen\xEDze?"
+    negative:
+      text: "Fakt bych to d\u011Blat nem\u011Bl. Proplat\xEDm ti to, ale jen kdy\u017E sl\xEDb\xED\u0161, \u017Ee hned potom odejde\u0161."
+      guestReply: "Slibuju. U\u017E m\u011B tu neuvid\xEDte."
+      socialBatteryChange: -3
+      money: 5
+    neutral:
+      text: "Pen\xEDze ti za n\u011Bj ned\xE1m. M\u016F\u017Ee\u0161 si s n\xEDm j\xEDt n\u011Bco zahr\xE1t."
+      guestReply: "To je na prd. Tak j\xE1 jdu na to st\u0159\xEDlen\xED."
+      socialBatteryChange: -2
+      money: 10
+    positive:
+      text: "Ty se\u0161 teda byznysmen! V\xED\u0161 co? Ho\u010F ten \u017Eeton do automatu, nahraj sk\xF3re, a pak se mo\u017En\xE1 pobav\xEDme, koho tu bude\u0161 ob\xEDrat!"
+      guestReply: "Tak to sleduj, te\u010F t\u011B oberu o high-score aspo\u0148 na pinballu!"
+      socialBatteryChange: -1
+      money: 15

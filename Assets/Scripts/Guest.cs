@@ -10,23 +10,38 @@ public class Guest : MonoBehaviour
     [SerializeField] private DialogGroup dialogGroup;   // группа (настроение) этого персонажа
     [SerializeField] private float speed = 2f;
 
+    [Header("Отображение в диалоге")]
+    [SerializeField] private string displayName = "Гость";
+    [SerializeField] private Sprite portrait;
+
     public DialogGroup DialogGroup => dialogGroup;
+    public string DisplayName => displayName;
     public bool IsWaiting => state == State.Waiting;
+
+    public Sprite Portrait
+    {
+        get
+        {
+            if (portrait != null) return portrait;
+
+            // Если портрет не задан, берём картинку самого гостя
+            var renderer = GetComponent<SpriteRenderer>();
+            return renderer != null ? renderer.sprite : null;
+        }
+    }
 
     private DayManager day;
     private Cashier cashier;
-    private GuestPlan plan;
     private SpriteRenderer sr;
 
     private State state;
     private bool conversationFinished;
     private bool leaveAfterDialog;
 
-    public void Init(DayManager dayManager, Cashier cashierRef, GuestPlan guestPlan)
+    public void Init(DayManager dayManager, Cashier cashierRef)
     {
         day = dayManager;
         cashier = cashierRef;
-        plan = guestPlan;
         sr = GetComponent<SpriteRenderer>();
 
         StartCoroutine(Life());
@@ -84,31 +99,26 @@ public class Guest : MonoBehaviour
         }
         cashier.ClearGuest(this);
 
-        // 4. Играем в автомате, если не обиделись и нам хватило места
-        if (!leaveAfterDialog && plan.fitsInHall && plan.machine != null)
+        // 4. Если не обиделись, бронируем свободный автомат (нет свободного: уходим)
+        if (!leaveAfterDialog)
         {
-            yield return PlayAtMachine();
+            ArcadeMachine machine = day.TryReserveMachine();
+            if (machine != null)
+            {
+                yield return PlayAtMachine(machine);
+            }
         }
 
         yield return Leave();
     }
 
-    private IEnumerator PlayAtMachine()
+    private IEnumerator PlayAtMachine(ArcadeMachine machine)
     {
-        ArcadeMachine machine = plan.machine;
-
         state = State.Walking;
         yield return MoveTo(machine.StandPoint.position);
 
-        while (machine.IsOccupied)
-        {
-            yield return null;
-        }
-
-        machine.Occupy();
         state = State.Playing;
-
-        float playTime = day.HallStayTime;
+        float playTime = day.PlayTime;
         yield return new WaitForSeconds(playTime);
 
         machine.Release();

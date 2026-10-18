@@ -68,7 +68,7 @@ public class Cashier : MonoBehaviour
         guest.BeginConversation();
         hero.CanMove = false;
 
-        dialogController.StartConversation(guest.DialogGroup, reply =>
+        dialogController.StartConversation(guest.DialogGroup, guest.DisplayName, guest.Portrait, reply =>
         {
             hero.CanMove = true;
             dialogActive = false;

@@ -76,8 +76,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.23, y: 0.29}
-    newSize: {x: 0.92, y: 1.16}
+    oldSize: {x: 0.26, y: 0.3}
+    newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 1
     adaptiveTiling: 0
@@ -133,12 +133,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -3634091196731740955, guid: d1d1907a58bfafd46ba5f820293245a0, type: 3}
+  m_Sprite: {fileID: -3807961883772049412, guid: 767102baf87cb974c8cccbbed24cf429, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 0.92, y: 1.16}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -156,5 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63f1702dbba1cb4438ee9e87b604ebd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Guest
-  dialogGroup: {fileID: 11400000, guid: dc28f1421b86ad84fa3dd2ddb904e126, type: 2}
+  dialogGroup: {fileID: 11400000, guid: f8855b3b877737e48bc313a1c7822064, type: 2}
   speed: 2
+  displayName: Pizda1
+  portrait: {fileID: -7412367841280449834, guid: 18242896d1995a2429245bf1aff2bee4, type: 3}

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d1d1907a58bfafd46ba5f820293245a0
+guid: 7b4bcf1337398f74f9901a51564c0aef
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3634091196731740955
-    second: girl3_0
+      213: 4125201287614479461
+    second: arcade4_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,7 +48,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -115,13 +115,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: girl3_0
+      name: arcade4_0
       rect:
         serializedVersion: 2
-        x: 4
+        x: 2
         y: 0
-        width: 23
-        height: 29
+        width: 28
+        height: 31
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -130,8 +130,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5ec2e619f4d119dc0800000000000000
-      internalID: -3634091196731740955
+      spriteID: 56cbe3ff6b8af3930800000000000000
+      internalID: 4125201287614479461
       vertices: []
       indices: 
       edges: []
@@ -150,7 +150,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      girl3_0: -3634091196731740955
+      arcade4_0: 4125201287614479461
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

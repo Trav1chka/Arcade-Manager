@@ -3,30 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// План для одного гостя, считается в начале дня
-public class GuestPlan
-{
-    public bool fitsInHall;         // поместится ли гость в зале
-    public ArcadeMachine machine;   // за каким автоматом будет играть
-}
-
-// Управляет одним игровым днём. Позже сюда можно подключить полноценную систему дней:
-// достаточно вызывать StartDay() и подписаться на OnDayEnded.
+// Управляет игровыми днями.
+// В начале дня считает, сколько гостей придёт, исходя из числа купленных автоматов.
+// После конца дня вызывает OnDayEnded (по нему открывается магазин).
+// Новый день начинается вызовом StartNextDay() (кнопка в магазине).
 public class DayManager : MonoBehaviour
 {
     [Header("День")]
     [SerializeField] private int currentDay = 1;
     [SerializeField] private bool autoStartDay = true;
+    [SerializeField] private int startingMachines = 1;      // сколько автоматов куплено в начале игры
 
-    [Header("Время (секунды)")]
-    [SerializeField] private float spawnInterval = 60f;         // интервал между гостями
-    [SerializeField] private float hallStayMultiplier = 2f;     // в зале гость проводит interval * это число
-    [SerializeField] private float cashierWaitReserve = 10f;    // гость уходит от кассы на столько секунд раньше следующего
-
-    [Header("Количество гостей за день")]
-    [SerializeField] private int baseGuests = 3;
-    [SerializeField] private int guestsPerDay = 1;              // прибавка за каждый день
-    [SerializeField] private int guestsPerMachine = 2;          // прибавка за каждый автомат
+    [Header("Тайминги (секунды)")]
+    [SerializeField] private float dayDuration = 300f;      // длина дня, в течение которой приходят гости
+    [SerializeField] private float playTime = 30f;          // сколько гость играет в автомате
+    [Range(0.1f, 1f)]
+    [SerializeField] private float machineBusyFraction = 0.5f;  // какую часть дня каждый автомат занят
+    [SerializeField] private float cashierWaitReserve = 10f;    // гость уходит от кассы на столько раньше следующего
+    [SerializeField] private float minCashierWait = 5f;         // но не быстрее этого
 
     [Header("Сцена")]
     [SerializeField] private Transform spawnPoint;
@@ -40,14 +34,41 @@ public class DayManager : MonoBehaviour
 
     public int CurrentDay => currentDay;
     public Transform ExitPoint => exitPoint;
-    public float HallStayTime => spawnInterval * hallStayMultiplier;
-    public float CashierWaitTime => Mathf.Max(0f, spawnInterval - cashierWaitReserve);
+    public float PlayTime => playTime;
+    public float CashierWaitTime => Mathf.Max(minCashierWait, currentInterval - cashierWaitReserve);
 
+    public IReadOnlyList<ArcadeMachine> Machines => machines;
+    public int TotalMachines => machines.Count;
+    public int PurchasedCount
+    {
+        get
+        {
+            int n = 0;
+            foreach (var m in machines) if (m.IsPurchased) n++;
+            return n;
+        }
+    }
+    public bool HasLockedMachine
+    {
+        get
+        {
+            foreach (var m in machines) if (!m.IsPurchased) return true;
+            return false;
+        }
+    }
+
+    private float currentInterval = 60f;
     private int activeGuests;
     private bool dayRunning;
 
     private void Start()
     {
+        // Первые startingMachines автоматов куплены, остальные выключены
+        for (int i = 0; i < machines.Count; i++)
+        {
+            machines[i].SetPurchased(i < startingMachines);
+        }
+
         if (autoStartDay) StartDay();
     }
 
@@ -57,10 +78,42 @@ public class DayManager : MonoBehaviour
         StartCoroutine(DayRoutine());
     }
 
-    // Для будущей покупки автоматов: вызывайте после покупки, и автомат учтётся со следующего дня
-    public void RegisterMachine(ArcadeMachine machine)
+    // Вызывается кнопкой "Следующий день" в магазине
+    public void StartNextDay()
     {
-        if (!machines.Contains(machine)) machines.Add(machine);
+        if (dayRunning) return;
+        currentDay++;
+        StartDay();
+    }
+
+    // Покупка: включает следующий непокупленный автомат
+    public bool UnlockNextMachine()
+    {
+        foreach (var m in machines)
+        {
+            if (!m.IsPurchased)
+            {
+                m.SetPurchased(true);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Гость вызывает это после диалога. Возвращает забронированный свободный автомат или null.
+    public ArcadeMachine TryReserveMachine()
+    {
+        var free = new List<ArcadeMachine>();
+        foreach (var m in machines)
+        {
+            if (m.IsPurchased && !m.IsBusy) free.Add(m);
+        }
+
+        if (free.Count == 0) return null;
+
+        ArcadeMachine chosen = free[UnityEngine.Random.Range(0, free.Count)];
+        chosen.Reserve();
+        return chosen;
     }
 
     public void OnGuestGone()
@@ -68,56 +121,40 @@ public class DayManager : MonoBehaviour
         activeGuests--;
     }
 
-    private int CalculateGuestCount()
+    // Гостей столько, чтобы каждый автомат был занят machineBusyFraction от длины дня
+    private int CalculateGuestCount(int machineCount)
     {
-        return baseGuests + (currentDay - 1) * guestsPerDay + machines.Count * guestsPerMachine;
-    }
-
-    // В начале дня заранее считаем, кто поместится в зал, а кто нет.
-    // Гость приходит раз в spawnInterval и занимает автомат на HallStayTime.
-    private List<GuestPlan> BuildPlans(int count)
-    {
-        var plans = new List<GuestPlan>();
-        var freeAt = new float[machines.Count];
-
-        for (int i = 0; i < count; i++)
-        {
-            float arrival = i * spawnInterval;
-            var plan = new GuestPlan();
-
-            for (int m = 0; m < machines.Count; m++)
-            {
-                if (freeAt[m] <= arrival + 0.01f)
-                {
-                    plan.fitsInHall = true;
-                    plan.machine = machines[m];
-                    freeAt[m] = arrival + HallStayTime;
-                    break;
-                }
-            }
-
-            plans.Add(plan);
-        }
-
-        return plans;
+        float count = machineCount * dayDuration * machineBusyFraction / playTime;
+        return Mathf.Max(1, Mathf.RoundToInt(count));
     }
 
     private IEnumerator DayRoutine()
     {
         dayRunning = true;
 
-        int count = CalculateGuestCount();
-        List<GuestPlan> plans = BuildPlans(count);
+        int machineCount = PurchasedCount;
+        if (machineCount == 0)
+        {
+            Debug.LogError("DayManager: нет купленных автоматов, день не начат.");
+            dayRunning = false;
+            yield break;
+        }
+
+        int count = CalculateGuestCount(machineCount);
+        currentInterval = dayDuration / count;
+
+        Debug.Log("День " + currentDay + ": автоматов " + machineCount + ", гостей " + count +
+                  ", интервал " + currentInterval.ToString("0.0") + " с");
 
         OnDayStarted?.Invoke(currentDay);
 
         for (int i = 0; i < count; i++)
         {
-            SpawnGuest(plans[i]);
+            SpawnGuest();
 
             if (i < count - 1)
             {
-                yield return new WaitForSeconds(spawnInterval);
+                yield return new WaitForSeconds(currentInterval);
             }
         }
 
@@ -129,10 +166,9 @@ public class DayManager : MonoBehaviour
 
         dayRunning = false;
         OnDayEnded?.Invoke(currentDay);
-        currentDay++;
     }
 
-    private void SpawnGuest(GuestPlan plan)
+    private void SpawnGuest()
     {
         if (guestPrefabs == null || guestPrefabs.Length == 0)
         {
@@ -141,12 +177,12 @@ public class DayManager : MonoBehaviour
         }
 
         Guest prefab = guestPrefabs[UnityEngine.Random.Range(0, guestPrefabs.Length)];
-        
+
         Vector3 pos = spawnPoint.position;
         pos.z = 0f;
-        Guest guest = Instantiate(prefab, pos, Quaternion.identity);
 
+        Guest guest = Instantiate(prefab, pos, Quaternion.identity);
         activeGuests++;
-        guest.Init(this, cashier, plan);
+        guest.Init(this, cashier);
     }
 }

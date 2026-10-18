@@ -15,6 +15,11 @@ public class DialogController : MonoBehaviour
     [SerializeField] private Dialog dialog;             // ваш скрипт с печатью по буквам
     [SerializeField] private Button[] answerButtons;    // ровно 3 кнопки
 
+    [Header("Собеседник")]
+    [SerializeField] private Image portraitImage;       // UI Image для портрета
+    [SerializeField] private Text nameLegacyText;       // заполните один из двух
+    [SerializeField] private TMP_Text nameTmpText;
+
     [Header("Настройки")]
     [SerializeField] private float replyHoldTime = 2f;  // сколько держать ответ гостя на экране
 
@@ -34,7 +39,7 @@ public class DialogController : MonoBehaviour
         if (panel != null) panel.SetActive(false);
     }
 
-    public void StartConversation(DialogGroup group, Action<ReplyType> onFinished)
+    public void StartConversation(DialogGroup group, string speakerName, Sprite speakerPortrait, Action<ReplyType> onFinished)
     {
         if (IsActive) return;
 
@@ -46,13 +51,14 @@ public class DialogController : MonoBehaviour
             return;
         }
 
-        StartCoroutine(ConversationRoutine(entry, onFinished));
+        StartCoroutine(ConversationRoutine(entry, speakerName, speakerPortrait, onFinished));
     }
 
-    private IEnumerator ConversationRoutine(DialogEntry entry, Action<ReplyType> onFinished)
+    private IEnumerator ConversationRoutine(DialogEntry entry, string speakerName, Sprite speakerPortrait, Action<ReplyType> onFinished)
     {
         IsActive = true;
         panel.SetActive(true);
+        SetSpeaker(speakerName, speakerPortrait);
         SetButtonsVisible(false);
 
         // Пропускаем кадр, чтобы Enter, начавший диалог, не промотал текст
@@ -107,6 +113,20 @@ public class DialogController : MonoBehaviour
         panel.SetActive(false);
         IsActive = false;
         onFinished?.Invoke(chosen.type);
+    }
+
+    // Подставляет имя и портрет собеседника в панель
+    private void SetSpeaker(string speakerName, Sprite portrait)
+    {
+        if (nameLegacyText != null) nameLegacyText.text = speakerName;
+        if (nameTmpText != null) nameTmpText.text = speakerName;
+
+        if (portraitImage != null)
+        {
+            portraitImage.sprite = portrait;
+            portraitImage.preserveAspect = true;
+            portraitImage.enabled = portrait != null;
+        }
     }
 
     // Печатает текст по буквам, Enter пропускает печать
