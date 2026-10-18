@@ -21,6 +21,9 @@ public class DayManager : MonoBehaviour
     [SerializeField] private float machineBusyFraction = 0.5f;  // какую часть дня каждый автомат занят
     [SerializeField] private float cashierWaitReserve = 10f;    // гость уходит от кассы на столько раньше следующего
     [SerializeField] private float minCashierWait = 5f;         // но не быстрее этого
+    [SerializeField] private float startDelay = 5f;             // пауза перед первым гостем
+    [SerializeField] private float endDelay = 5f;               // пауза после ухода последнего гостя
+    [SerializeField] private float emptyHallDelay = 5f;         // через сколько придёт следующий, если зал опустел раньше интервала
 
     [Header("Сцена")]
     [SerializeField] private Transform spawnPoint;
@@ -148,6 +151,10 @@ public class DayManager : MonoBehaviour
                   ", интервал " + currentInterval.ToString("0.0") + " с");
 
         OnDayStarted?.Invoke(currentDay);
+        AudioManager.PlayDayMusic();
+
+        // Пауза перед первым гостем
+        yield return new WaitForSeconds(startDelay);
 
         for (int i = 0; i < count; i++)
         {
@@ -155,7 +162,21 @@ public class DayManager : MonoBehaviour
 
             if (i < count - 1)
             {
-                yield return new WaitForSeconds(currentInterval);
+                // Ждём интервал. Если зал опустел, следующий гость приходит через emptyHallDelay
+                // после ухода предыдущего, но не позже конца обычного интервала
+                float timer = 0f;
+                float emptyTimer = 0f;
+                while (timer < currentInterval)
+                {
+                    if (activeGuests == 0)
+                    {
+                        emptyTimer += Time.deltaTime;
+                        if (emptyTimer >= emptyHallDelay) break;
+                    }
+
+                    timer += Time.deltaTime;
+                    yield return null;
+                }
             }
         }
 
@@ -167,7 +188,11 @@ public class DayManager : MonoBehaviour
             yield return null;
         }
 
+        // Пауза после ухода последнего гостя
+        yield return new WaitForSeconds(endDelay);
+
         dayRunning = false;
+        AudioManager.StopDayMusic();
         Debug.Log("День " + currentDay + " закончен, должен открыться магазин");
         OnDayEnded?.Invoke(currentDay);
     }

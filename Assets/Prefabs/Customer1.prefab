@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -1204, y: 14}
-  m_SizeDelta: {x: 128, y: 128}
+  m_SizeDelta: {x: 0.94, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!61 &319966604843001400
 BoxCollider2D:
@@ -82,7 +82,7 @@ BoxCollider2D:
     drawMode: 1
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.28, y: 1.28}
+  m_Size: {x: 0.94, y: 1}
   m_EdgeRadius: 0
 --- !u!212 &2066387101804498955
 SpriteRenderer:

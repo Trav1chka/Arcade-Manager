@@ -1,9 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Магазин: открывается после конца дня. Показывает список всех автоматов,
+// Магазин: открывается после конца дня (через затемнение). Показывает список всех автоматов,
 // можно купить один автомат в день и начать следующий день.
 // Повесьте на ПОСТОЯННО активный объект (не на shopPanel, которая скрывается).
 public class ShopController : MonoBehaviour
@@ -12,10 +12,10 @@ public class ShopController : MonoBehaviour
     [SerializeField] private DayManager day;
     [SerializeField] private GameObject shopPanel;
     [SerializeField] private Button nextDayButton;
-    [SerializeField] private TMP_Text infoText;             // день, деньги, SocialBattery
+    [SerializeField] private ScreenFader fader;             // чёрный экран для переходов
 
     [Header("Список автоматов")]
-    [SerializeField] private Transform itemsContainer;      // сюда создаются строки
+    [SerializeField] private Transform itemsContainer;      // сюда создаются строки (или лежат готовые карточки)
     [SerializeField] private ShopItemUI itemPrefab;         // префаб строки
 
     [Header("Покупка")]
@@ -23,6 +23,7 @@ public class ShopController : MonoBehaviour
 
     private readonly List<ShopItemUI> items = new List<ShopItemUI>();
     private bool boughtToday;
+    private bool transitioning;
 
     private void Awake()
     {
@@ -43,16 +44,42 @@ public class ShopController : MonoBehaviour
         day.OnDayStarted -= HandleDayStarted;
     }
 
-    // Создаёт по одной строке на каждый автомат из списка DayManager
+    // Если в Items Container уже лежат карточки с ShopItemUI, привязываем их к автоматам по порядку.
+    // Если карточек нет, создаём их из Item Prefab.
     private void BuildItems()
     {
-        if (itemPrefab == null || itemsContainer == null)
+        if (itemsContainer == null)
         {
-            Debug.LogError("ShopController: не назначены Item Prefab или Items Container.");
+            Debug.LogError("ShopController: не назначен Items Container.");
             return;
         }
 
-        foreach (ArcadeMachine machine in day.Machines)
+        IReadOnlyList<ArcadeMachine> machines = day.Machines;
+        ShopItemUI[] existing = itemsContainer.GetComponentsInChildren<ShopItemUI>(true);
+
+        if (existing.Length > 0)
+        {
+            if (existing.Length != machines.Count)
+            {
+                Debug.LogWarning("ShopController: карточек " + existing.Length + ", а автоматов в списке " + machines.Count + ".");
+            }
+
+            int count = Mathf.Min(existing.Length, machines.Count);
+            for (int i = 0; i < count; i++)
+            {
+                existing[i].Setup(machines[i], OnBuyClicked);
+                items.Add(existing[i]);
+            }
+            return;
+        }
+
+        if (itemPrefab == null)
+        {
+            Debug.LogError("ShopController: в Items Container нет карточек с ShopItemUI и не назначен Item Prefab.");
+            return;
+        }
+
+        foreach (ArcadeMachine machine in machines)
         {
             ShopItemUI item = Instantiate(itemPrefab, itemsContainer);
             item.Setup(machine, OnBuyClicked);
@@ -62,8 +89,7 @@ public class ShopController : MonoBehaviour
 
     private void HandleDayEnded(int endedDay)
     {
-        shopPanel.SetActive(true);
-        Refresh();
+        StartCoroutine(OpenShopRoutine());
     }
 
     private void HandleDayStarted(int startedDay)
@@ -72,33 +98,56 @@ public class ShopController : MonoBehaviour
         shopPanel.SetActive(false);
     }
 
+    // День закончился: экран чернеет, под чёрным включается магазин, экран проясняется
+    private IEnumerator OpenShopRoutine()
+    {
+        transitioning = true;
+
+        if (fader != null) yield return fader.FadeToBlack();
+
+        shopPanel.SetActive(true);
+        Refresh();
+
+        if (fader != null) yield return fader.FadeFromBlack();
+
+        transitioning = false;
+    }
+
+    // Следующий день: экран чернеет, показывается "Day N", день стартует, экран проясняется
+    private IEnumerator NextDayRoutine()
+    {
+        transitioning = true;
+        AudioManager.PlayNextDay();
+
+        if (fader != null) yield return fader.FadeToBlack();
+
+        shopPanel.SetActive(false);
+
+        if (fader != null) yield return fader.ShowDayTitle(day.CurrentDay + 1);
+
+        day.StartNextDay();
+
+        if (fader != null) yield return fader.FadeFromBlack();
+
+        transitioning = false;
+    }
+
     private void Refresh()
     {
         GameStats stats = GameStats.Instance;
         int money = stats != null ? stats.Money : 0;
-        int battery = stats != null ? stats.SocialBattery : 0;
-
-        if (infoText != null)
-        {
-            string note = boughtToday ? "\nСегодня автомат уже куплен" : "\nМожно купить один автомат";
-            infoText.text = "День " + day.CurrentDay + " завершён\n" +
-                            "Деньги: " + money + "\n" +
-                            "SocialBattery: " + battery + "%" + note;
-        }
 
         for (int i = 0; i < items.Count; i++)
         {
             ArcadeMachine machine = day.Machines[i];
             bool canBuy = !boughtToday && !machine.IsPurchased && money >= machine.Price;
-            Debug.Log("Магазин: " + machine.name + " куплен=" + machine.IsPurchased +
-                      ", цена=" + machine.Price + ", можно купить=" + canBuy);
             items[i].Refresh(machine, canBuy);
         }
     }
 
     private void OnBuyClicked(ArcadeMachine machine)
     {
-        Debug.Log("Клик по покупке: " + machine.name + " (цена " + machine.Price + ")");
+        if (transitioning) return;
 
         if (boughtToday)
         {
@@ -126,6 +175,7 @@ public class ShopController : MonoBehaviour
         }
 
         machine.SetPurchased(true);
+        AudioManager.PlayMachinePurchased();
         stats.AddSocialBattery(socialBatteryBonus);
         boughtToday = true;
 
@@ -134,7 +184,7 @@ public class ShopController : MonoBehaviour
 
     private void OnNextDayClicked()
     {
-        shopPanel.SetActive(false);
-        day.StartNextDay();
+        if (transitioning) return;
+        StartCoroutine(NextDayRoutine());
     }
 }

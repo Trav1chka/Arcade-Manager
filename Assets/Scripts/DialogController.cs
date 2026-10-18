@@ -94,6 +94,7 @@ public class DialogController : MonoBehaviour
 
         // 3. Эффект ответа
         var chosen = options[chosenIndex];
+        AudioManager.PlayReply(chosen.type);
         if (GameStats.Instance != null)
         {
             GameStats.Instance.AddSocialBattery(chosen.option.socialBatteryChange);

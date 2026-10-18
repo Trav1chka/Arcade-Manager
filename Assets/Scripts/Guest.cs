@@ -76,6 +76,7 @@ public class Guest : MonoBehaviour
 
         // 2. Ждём игрока
         state = State.Waiting;
+        AudioManager.PlayGuestArrived();
         float timer = 0f;
         float maxWait = day.CashierWaitTime;
 
