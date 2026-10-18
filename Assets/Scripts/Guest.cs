@@ -34,7 +34,8 @@ public class Guest : MonoBehaviour
     private Cashier cashier;
     private SpriteRenderer sr;
 
-    private State state;
+    [Header("Состояние (только для просмотра)")]
+    [SerializeField] private State state;
     private bool conversationFinished;
     private bool leaveAfterDialog;
 
@@ -87,6 +88,7 @@ public class Guest : MonoBehaviour
         if (state == State.Waiting)
         {
             // Игрок не успел: уходим
+            Debug.Log(name + ": игрок не успел, гость уходит");
             cashier.ClearGuest(this);
             yield return Leave();
             yield break;
@@ -106,6 +108,10 @@ public class Guest : MonoBehaviour
             if (machine != null)
             {
                 yield return PlayAtMachine(machine);
+            }
+            else
+            {
+                Debug.Log(name + ": нет свободного автомата, гость уходит");
             }
         }
 

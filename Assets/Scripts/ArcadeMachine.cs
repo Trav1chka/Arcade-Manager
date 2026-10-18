@@ -5,14 +5,14 @@ using UnityEngine;
 public class ArcadeMachine : MonoBehaviour
 {
     [Header("Магазин")]
-    [SerializeField] private string displayName = "Автомат";
+    [SerializeField] private Sprite icon;                   // картинка автомата в магазине
     [SerializeField] private int price = 100;
 
     [Header("Работа")]
     [SerializeField] private Transform standPoint;          // где стоит гость (если пусто, позиция автомата)
     [SerializeField] private float profitPerSecond = 0.5f;  // прибыльность
 
-    public string DisplayName => displayName;
+    public Sprite Icon => icon;
     public int Price => price;
 
     public bool IsPurchased { get; private set; }

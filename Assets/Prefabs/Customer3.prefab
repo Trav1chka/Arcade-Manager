@@ -156,7 +156,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63f1702dbba1cb4438ee9e87b604ebd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Guest
-  dialogGroup: {fileID: 11400000, guid: 2f4ef20165242c349ab2f9fe3ce11d9b, type: 2}
+  dialogGroup: {fileID: 11400000, guid: f8855b3b877737e48bc313a1c7822064, type: 2}
   speed: 2
-  displayName: Pizda3
+  displayName: "Maru\u0161ka"
   portrait: {fileID: -1255167069410224924, guid: 44571482ea590a74998ee90c82cf5ca5, type: 3}
+  state: 0

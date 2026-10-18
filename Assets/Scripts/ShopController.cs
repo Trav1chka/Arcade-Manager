@@ -46,6 +46,12 @@ public class ShopController : MonoBehaviour
     // Создаёт по одной строке на каждый автомат из списка DayManager
     private void BuildItems()
     {
+        if (itemPrefab == null || itemsContainer == null)
+        {
+            Debug.LogError("ShopController: не назначены Item Prefab или Items Container.");
+            return;
+        }
+
         foreach (ArcadeMachine machine in day.Machines)
         {
             ShopItemUI item = Instantiate(itemPrefab, itemsContainer);
@@ -84,18 +90,40 @@ public class ShopController : MonoBehaviour
         {
             ArcadeMachine machine = day.Machines[i];
             bool canBuy = !boughtToday && !machine.IsPurchased && money >= machine.Price;
+            Debug.Log("Магазин: " + machine.name + " куплен=" + machine.IsPurchased +
+                      ", цена=" + machine.Price + ", можно купить=" + canBuy);
             items[i].Refresh(machine, canBuy);
         }
     }
 
     private void OnBuyClicked(ArcadeMachine machine)
     {
-        if (boughtToday || machine.IsPurchased) return;
+        Debug.Log("Клик по покупке: " + machine.name + " (цена " + machine.Price + ")");
+
+        if (boughtToday)
+        {
+            Debug.Log("Покупка отклонена: сегодня уже куплен автомат");
+            return;
+        }
+
+        if (machine.IsPurchased)
+        {
+            Debug.Log("Покупка отклонена: этот автомат уже куплен");
+            return;
+        }
 
         GameStats stats = GameStats.Instance;
-        if (stats == null) return;
+        if (stats == null)
+        {
+            Debug.LogError("Покупка отклонена: на сцене нет GameStats");
+            return;
+        }
 
-        if (!stats.TrySpendMoney(machine.Price)) return;
+        if (!stats.TrySpendMoney(machine.Price))
+        {
+            Debug.Log("Покупка отклонена: не хватает денег (есть " + stats.Money + ")");
+            return;
+        }
 
         machine.SetPurchased(true);
         stats.AddSocialBattery(socialBatteryBonus);

@@ -119,6 +119,7 @@ public class DayManager : MonoBehaviour
     public void OnGuestGone()
     {
         activeGuests--;
+        Debug.Log("Гость ушёл, осталось: " + activeGuests);
     }
 
     // Гостей столько, чтобы каждый автомат был занят machineBusyFraction от длины дня
@@ -158,6 +159,8 @@ public class DayManager : MonoBehaviour
             }
         }
 
+        Debug.Log("Все гости дня созданы, ждём пока уйдут");
+
         // День заканчивается, когда все гости ушли
         while (activeGuests > 0)
         {
@@ -165,6 +168,7 @@ public class DayManager : MonoBehaviour
         }
 
         dayRunning = false;
+        Debug.Log("День " + currentDay + " закончен, должен открыться магазин");
         OnDayEnded?.Invoke(currentDay);
     }
 
@@ -183,6 +187,7 @@ public class DayManager : MonoBehaviour
 
         Guest guest = Instantiate(prefab, pos, Quaternion.identity);
         activeGuests++;
+        Debug.Log("Гость создан, гостей на сцене: " + activeGuests);
         guest.Init(this, cashier);
     }
 }
