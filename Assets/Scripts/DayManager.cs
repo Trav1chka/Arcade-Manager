@@ -25,6 +25,8 @@ public class DayManager : MonoBehaviour
     [SerializeField] private float endDelay = 5f;               // пауза после ухода последнего гостя
     [SerializeField] private float emptyHallDelay = 5f;         // через сколько придёт следующий, если зал опустел раньше интервала
     [SerializeField] private float graceTimePerGuest = 20f;     // запас времени на каждого гостя сверх длины дня (лимит дня)
+    [Range(0.1f, 1f)]
+    [SerializeField] private float firstDayTimeMultiplier = 0.5f;  // первый день короче: длина дня и время игры умножаются на это
 
     [Header("Сцена")]
     [SerializeField] private Transform spawnPoint;
@@ -43,7 +45,11 @@ public class DayManager : MonoBehaviour
 
     public int CurrentDay => currentDay;
     public Transform ExitPoint => exitPoint;
-    public float PlayTime => playTime;
+    public float PlayTime => playTime * DayMultiplier;
+
+    // Первый день короче: времена умножаются на множитель (в остальные дни он равен 1)
+    private float DayMultiplier => currentDay == 1 ? firstDayTimeMultiplier : 1f;
+    private float CurrentDayDuration => dayDuration * DayMultiplier;
     public GameObject PickupIconPrefab => pickupIconPrefab;
     public float PickupIconHeightFactor => pickupIconHeightFactor;
     public float CashierWaitTime => Mathf.Max(minCashierWait, currentInterval - cashierWaitReserve);
@@ -136,7 +142,7 @@ public class DayManager : MonoBehaviour
     // Гостей столько, чтобы каждый автомат был занят machineBusyFraction от длины дня
     private int CalculateGuestCount(int machineCount)
     {
-        float count = machineCount * dayDuration * machineBusyFraction / playTime;
+        float count = machineCount * CurrentDayDuration * machineBusyFraction / PlayTime;
         return Mathf.Max(1, Mathf.RoundToInt(count));
     }
 
@@ -153,14 +159,14 @@ public class DayManager : MonoBehaviour
         }
 
         int count = CalculateGuestCount(machineCount);
-        currentInterval = dayDuration / count;
+        currentInterval = CurrentDayDuration / count;
 
         Debug.Log("День " + currentDay + ": автоматов " + machineCount + ", гостей " + count +
                   ", интервал " + currentInterval.ToString("0.0") + " с");
 
         // Лимит времени дня: длина дня + запас на каждого гостя.
         // Не уложились: день заканчивается принудительно, оставшиеся гости уходят без оплаты.
-        float timeLimit = startDelay + dayDuration + count * graceTimePerGuest;
+        float timeLimit = startDelay + CurrentDayDuration + count * graceTimePerGuest;
         float dayStartTime = Time.time;
         Debug.Log("Лимит времени дня: " + timeLimit.ToString("0") + " с");
 

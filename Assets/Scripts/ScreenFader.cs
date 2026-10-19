@@ -8,10 +8,10 @@ using UnityEngine;
 public class ScreenFader : MonoBehaviour
 {
     [SerializeField] private CanvasGroup canvasGroup;
-    [SerializeField] private TMP_Text dayText;                  // надпись "Day 2" (дочерний объект панели)
+    [SerializeField] private TMP_Text dayText;                  // надпись "Day 2" (дочерний объект панели, можно не назначать)
 
     [Header("Настройки")]
-    [SerializeField] private float fadeDuration = 1f;           // длительность затемнения / появления
+    [SerializeField] private float fadeDuration = 1f;           // длительность затемнения / появления по умолчанию
     [SerializeField] private float titleDuration = 2f;          // сколько держать надпись с днём
     [SerializeField] private string dayTextFormat = "Day {0}";  // формат надписи
 
@@ -26,16 +26,23 @@ public class ScreenFader : MonoBehaviour
         if (dayText != null) dayText.gameObject.SetActive(false);
     }
 
-    // Экран плавно становится чёрным
-    public IEnumerator FadeToBlack()
+    // Мгновенно делает экран чёрным (например, в начале игровой сцены)
+    public void SetBlack()
     {
-        return Fade(1f);
+        canvasGroup.alpha = 1f;
+        canvasGroup.blocksRaycasts = true;
+    }
+
+    // Экран плавно становится чёрным. duration меньше 0 означает "взять значение по умолчанию"
+    public IEnumerator FadeToBlack(float duration = -1f)
+    {
+        return Fade(1f, duration);
     }
 
     // Чёрный экран плавно исчезает
-    public IEnumerator FadeFromBlack()
+    public IEnumerator FadeFromBlack(float duration = -1f)
     {
-        return Fade(0f);
+        return Fade(0f, duration);
     }
 
     // Показывает надпись с номером дня на чёрном экране
@@ -52,18 +59,20 @@ public class ScreenFader : MonoBehaviour
         if (dayText != null) dayText.gameObject.SetActive(false);
     }
 
-    private IEnumerator Fade(float target)
+    private IEnumerator Fade(float target, float duration)
     {
+        if (duration < 0f) duration = fadeDuration;
+
         // Во время перехода и на полностью чёрном экране клики блокируются
         canvasGroup.blocksRaycasts = true;
 
         float start = canvasGroup.alpha;
         float t = 0f;
 
-        while (t < fadeDuration)
+        while (t < duration)
         {
             t += Time.unscaledDeltaTime;
-            canvasGroup.alpha = Mathf.Lerp(start, target, t / fadeDuration);
+            canvasGroup.alpha = Mathf.Lerp(start, target, t / duration);
             yield return null;
         }
 

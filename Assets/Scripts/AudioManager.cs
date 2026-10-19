@@ -20,6 +20,7 @@ public class AudioManager : MonoBehaviour
     [Header("Музыка")]
     [SerializeField] private AudioClip dayMusic;               // песня, пока идёт день (повторяется)
     [SerializeField] private AudioClip shopMusic;              // песня в магазине (повторяется)
+    [SerializeField] private AudioClip introMusic;             // музыка интро в главном меню
     [SerializeField] private float fadeTime = 1f;              // плавное включение и выключение, секунд
 
     [Header("Громкость")]
@@ -92,6 +93,16 @@ public class AudioManager : MonoBehaviour
     }
 
     public static void StopDayMusic()
+    {
+        if (Instance != null) Instance.EndMusic();
+    }
+
+    public static void PlayIntroMusic()
+    {
+        if (Instance != null) Instance.StartMusic(Instance.introMusic);
+    }
+
+    public static void StopIntroMusic()
     {
         if (Instance != null) Instance.EndMusic();
     }

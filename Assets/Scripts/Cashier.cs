@@ -16,6 +16,8 @@ public class Cashier : MonoBehaviour
 
     public Transform GuestPoint => guestPoint;
     public bool IsDialogActive => dialogActive;
+    public bool HasWaitingGuest => currentGuest != null && currentGuest.IsWaiting;
+    public bool IsHeroInZone => heroInZone != null;
 
     public bool TryRegisterGuest(Guest guest)
     {
